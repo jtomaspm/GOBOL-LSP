@@ -12,24 +12,24 @@ type Settings struct {
 }
 
 func NewSettings() Settings {
-	if helpFlag := flag.Bool("help", false, "Show help"); helpFlag != nil && *helpFlag {
-		fmt.Println("GOBOL-LSP -interface <stdio|tcp> -log_path <path>")
+	// Define flags
+	helpFlag := flag.Bool("help", false, "Show help")
+	hFlag := flag.Bool("h", false, "Show help (short)")
+	logPathFlag := flag.String("log_path", "", "Path to log file")
+	ifaceFlag := flag.String("interface", "stdio", "Interface type")
+
+	// Parse command-line flags
+	flag.Parse()
+
+	// Show help if requested
+	if *helpFlag || *hFlag {
+		fmt.Println("Usage: GOBOL-LSP -interface <stdio|tcp> -log_path <path>")
 		os.Exit(0)
 	}
-	if helpFlag := flag.Bool("h", false, "Show help"); helpFlag != nil && *helpFlag {
-		fmt.Println("GOBOL-LSP -interface <stdio|tcp> -log_path <path>")
-		os.Exit(0)
-	}
-	logPath := ""
-	if logPathFlag := flag.String("log_path", "", "Path to log file"); logPathFlag != nil {
-		logPath = *logPathFlag
-	}
-	iface := ""
-	if ifaceFlag := flag.String("interface", "stdio", "Interface type"); ifaceFlag != nil {
-		iface = *ifaceFlag
-	}
+
+	// Return settings
 	return Settings{
-		LogPath:   logPath,
-		Interface: iface,
+		LogPath:   *logPathFlag,
+		Interface: *ifaceFlag,
 	}
 }
