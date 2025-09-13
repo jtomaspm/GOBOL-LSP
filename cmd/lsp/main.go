@@ -2,9 +2,11 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"log"
 	"os"
 
+	"github.com/jtomaspm/GOBOL-LSP/pkg/lsp"
 	"github.com/jtomaspm/GOBOL-LSP/pkg/rpc"
 )
 
@@ -27,6 +29,14 @@ func main() {
 
 func handleMessage(logger *log.Logger, method string, content []byte) {
 	logger.Printf("Received message: [%s] %s", method, content)
+	switch method {
+	case "initialize":
+		var request lsp.InitializeRequest
+		if err := json.Unmarshal(content, &request); err != nil {
+			logger.Printf("Error: %s", err)
+		}
+		logger.Printf("Connected: %s [%s]", request.Params.ClientInfo.Name, request.Params.ClientInfo.Version)
+	}
 }
 
 func getLogger(filename string) *log.Logger {
