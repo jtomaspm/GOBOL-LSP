@@ -7,6 +7,10 @@ import (
 	"strconv"
 )
 
+type RPCMessage struct {
+	Method string `json:"method"`
+}
+
 func EncodeMessage(msg any) string {
 	content, err := json.Marshal(msg)
 	if err != nil {
@@ -30,7 +34,7 @@ func DecodeMessage(data []byte) (string, []byte, error) {
 
 	content = content[:contentLength]
 
-	var baseMessage BaseMessage
+	var baseMessage RPCMessage
 	if err = json.Unmarshal(content, &baseMessage); err != nil || baseMessage.Method == "" {
 		return "", nil, fmt.Errorf("invalid JSON content: %v", err)
 	}
