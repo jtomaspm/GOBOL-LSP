@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	logger := getLogger("gobol-lsp.log")
+	logger := getLogger("/home/pop/Code/GOBOL-LSP/gobol-lsp.log")
 	logger.Println("GOBOL LSP started")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
