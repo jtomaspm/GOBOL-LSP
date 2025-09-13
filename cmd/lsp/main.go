@@ -36,6 +36,9 @@ func handleMessage(logger *log.Logger, method string, content []byte) {
 			logger.Printf("Error: %s", err)
 		}
 		logger.Printf("Connected: %s [%s]", request.Params.ClientInfo.Name, request.Params.ClientInfo.Version)
+		response := lsp.NewInitializeResponse(request.ID)
+		encodedResponse := []byte(rpc.EncodeMessage(response))
+		os.Stdout.Write(encodedResponse)
 	}
 }
 
