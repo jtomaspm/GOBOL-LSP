@@ -23,7 +23,7 @@ func EncodeMessage(msg any) string {
 func DecodeMessage(data []byte) (string, []byte, error) {
 	header, content, found := bytes.Cut(data, []byte("\r\n\r\n"))
 	if !found {
-		return "", nil, fmt.Errorf("invalid message: missing header-body separator")
+		return "", nil, fmt.Errorf("invalid message: missing header-body separator: %s", data)
 	}
 
 	contentLengthBytes := header[len("Content-Length: "):]
