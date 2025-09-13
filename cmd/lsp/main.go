@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/jtomaspm/GOBOL-LSP/pkg/analysis"
 	"github.com/jtomaspm/GOBOL-LSP/pkg/lsp"
 	"github.com/jtomaspm/GOBOL-LSP/pkg/rpc"
 )
@@ -16,6 +17,8 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
 
+	state := analysis.NewState()
+
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, content, err := rpc.DecodeMessage(msg)
@@ -23,11 +26,11 @@ func main() {
 			logger.Printf("Error: %s", err)
 			continue
 		}
-		handleMessage(logger, method, content)
+		handleMessage(logger, method, content, &state)
 	}
 }
 
-func handleMessage(logger *log.Logger, method string, content []byte) {
+func handleMessage(logger *log.Logger, method string, content []byte, state *analysis.State) {
 	logger.Printf("Received message: [%s] %s", method, content)
 	switch method {
 	case "initialize":
@@ -39,6 +42,22 @@ func handleMessage(logger *log.Logger, method string, content []byte) {
 		response := lsp.NewInitializeResponse(request.ID)
 		encodedResponse := []byte(rpc.EncodeMessage(response))
 		os.Stdout.Write(encodedResponse)
+	case "textDocument/didOpen":
+		var request lsp.DidOpenTextDocumentNotification
+		if err := json.Unmarshal(content, &request); err != nil {
+			logger.Printf("Error: %s", err)
+		}
+		logger.Printf("Opened: %s", request.Params.TextDocument.URI)
+		state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
+	case "textDocument/didChange":
+		var request lsp.DidChangeTextDocumentNotification
+		if err := json.Unmarshal(content, &request); err != nil {
+			logger.Printf("Error: %s", err)
+		}
+		logger.Printf("Changed: %s", request.Params.TextDocument.URI)
+		for _, change := range request.Params.ContentChanges {
+			state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
+		}
 	}
 }
 
