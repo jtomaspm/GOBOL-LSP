@@ -3,7 +3,7 @@ package application
 import (
 	"bufio"
 	"encoding/json"
-	"os"
+	"io"
 
 	"github.com/jtomaspm/GOBOL-LSP/pkg/analysis"
 	"github.com/jtomaspm/GOBOL-LSP/pkg/lsp"
@@ -15,18 +15,21 @@ type Application struct {
 	state    *analysis.State
 	scanner  *bufio.Scanner
 	settings Settings
+	writer   io.Writer
 }
 
 func NewApplication() Application {
 	settings := NewSettings()
 	logger := NewLogger(settings)
 	scanner := NewScanner(settings)
+	writer := NewWriter(settings)
 	state := analysis.NewState()
 	return Application{
 		logger:   logger,
 		settings: settings,
 		scanner:  scanner,
 		state:    state,
+		writer:   writer,
 	}
 }
 
@@ -53,8 +56,7 @@ func (app *Application) handleMessage(method string, content []byte) {
 		}
 		app.logger.Printf("Connected: %s [%s]", request.Params.ClientInfo.Name, request.Params.ClientInfo.Version)
 		response := lsp.NewInitializeResponse(request.ID)
-		encodedResponse := []byte(rpc.EncodeMessage(response))
-		os.Stdout.Write(encodedResponse)
+		app.writeResponse(response)
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(content, &request); err != nil {
@@ -71,5 +73,26 @@ func (app *Application) handleMessage(method string, content []byte) {
 		for _, change := range request.Params.ContentChanges {
 			app.state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
 		}
+	case "textDocument/hover":
+		var request lsp.HoverRequest
+		if err := json.Unmarshal(content, &request); err != nil {
+			app.logger.Printf("Error: %s", err)
+		}
+		app.logger.Printf("Hover: %s", request.Params.TextDocument.URI)
+		response := lsp.HoverResponse{
+			Response: lsp.Response{
+				ID:  &request.ID,
+				RPC: "2.0",
+			},
+			Result: lsp.HoverResult{
+				Contents: "Hello, World!",
+			},
+		}
+		app.writeResponse(response)
 	}
+}
+
+func (app *Application) writeResponse(msg any) {
+	encodedResponse := []byte(rpc.EncodeMessage(msg))
+	app.writer.Write(encodedResponse)
 }
