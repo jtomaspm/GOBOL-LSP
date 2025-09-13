@@ -21,7 +21,7 @@ func main() {
 }
 
 func handleMessage(logger *log.Logger, msg any) {
-	logger.Println("Received message:\n", msg)
+	logger.Printf("Received message: %s", msg)
 }
 
 func getLogger(filename string) *log.Logger {
