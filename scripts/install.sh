@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh -eu
 set -e
 
 EXECUTABLE="GOBOL-LSP"
