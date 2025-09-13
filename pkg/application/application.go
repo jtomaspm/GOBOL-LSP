@@ -31,6 +31,7 @@ func NewApplication() Application {
 }
 
 func (app *Application) Run() {
+	app.logger.Println("GOBOL-LSP running...")
 	for app.scanner.Scan() {
 		msg := app.scanner.Bytes()
 		method, content, err := rpc.DecodeMessage(msg)
