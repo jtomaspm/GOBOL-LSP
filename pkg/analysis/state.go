@@ -24,7 +24,9 @@ func (s *State) UpdateDocument(uri, text string) {
 }
 
 func (s *State) Hover(uri string, position lsp.Position, response *lsp.HoverResponse) {
-	response.Result.Contents = fmt.Sprintf("File: %s, Character: %d/%d", uri, position.Character+1, len(s.Documents[uri][position.Line]))
+	response.Result = lsp.HoverResult{
+		Contents: fmt.Sprintf("File: %s, Character: %d/%d", uri, position.Character+1, len(s.Documents[uri][position.Line])),
+	}
 }
 
 func (s *State) Definition(uri string, position lsp.Position, response *lsp.DefinitionResponse) {

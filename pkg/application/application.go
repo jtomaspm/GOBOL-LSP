@@ -102,11 +102,9 @@ func (app *Application) handleTDHover(content []byte) {
 	response := lsp.HoverResponse{
 		Response: lsp.Response{
 			ID:  &request.ID,
-			RPC: "2.0",
+			RPC: rpc.VERSION,
 		},
-		Result: lsp.HoverResult{
-			Contents: "",
-		},
+		Result: lsp.HoverResult{},
 	}
 	app.state.Hover(request.Params.TextDocument.URI, request.Params.Position, &response)
 	app.writeResponse(response)
@@ -120,7 +118,7 @@ func (app *Application) handleTDDefinition(content []byte) {
 	response := lsp.DefinitionResponse{
 		Response: lsp.Response{
 			ID:  &request.ID,
-			RPC: "2.0",
+			RPC: rpc.VERSION,
 		},
 		Result: lsp.Location{},
 	}

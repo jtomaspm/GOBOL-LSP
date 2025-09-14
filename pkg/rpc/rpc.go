@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+const VERSION = "2.0"
+
 type RPCMessage struct {
 	Method string `json:"method"`
 }

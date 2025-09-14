@@ -1,5 +1,7 @@
 package lsp
 
+import "github.com/jtomaspm/GOBOL-LSP/pkg/rpc"
+
 type InitializeRequest struct {
 	Request
 	Params InitializeRequestParams `json:"params"`
@@ -40,7 +42,7 @@ type ServerCapabilities struct {
 func NewInitializeResponse(id int) InitializeResponse {
 	return InitializeResponse{
 		Response: Response{
-			RPC: "2.0",
+			RPC: rpc.VERSION,
 			ID:  &id,
 		},
 		Result: InitializeResult{
