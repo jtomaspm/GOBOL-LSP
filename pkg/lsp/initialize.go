@@ -41,13 +41,13 @@ func NewInitializeResponse(id int) InitializeResponse {
 			ID:  &id,
 		},
 		Result: InitializeResult{
-			Capabilities: ServerCapabilities{
-				TextDocumentSync: 1,
-				HoverProvider:    true,
-			},
 			ServerInfo: ServerInfo{
 				Name:    "GOBOL-LSP",
 				Version: "0.0.0",
+			},
+			Capabilities: ServerCapabilities{
+				TextDocumentSync: 1,
+				HoverProvider:    true,
 			},
 		},
 	}
