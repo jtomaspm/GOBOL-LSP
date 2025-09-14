@@ -57,6 +57,7 @@ func (app *Application) handleMessage(method string, content []byte) {
 		app.handleInitialize(content)
 	case "textDocument/didOpen":
 		app.handleTDDidOpen(content)
+		app.logger.Println(app.state.Documents)
 	case "textDocument/didChange":
 		app.handleTDDidChange(content)
 	case "textDocument/hover":
@@ -129,6 +130,8 @@ func (app *Application) handleTDDefinition(content []byte) {
 func (app *Application) writeResponse(msg any) {
 	encodedResponse := []byte(rpc.EncodeMessage(msg))
 	if _, err := app.writer.Write(encodedResponse); err != nil {
-		app.logger.Printf("failed to write response: %v", err)
+		app.logger.Printf("Error: %v", err)
+	} else {
+		app.logger.Printf("Response: %s", encodedResponse)
 	}
 }
