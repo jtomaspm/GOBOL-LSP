@@ -51,15 +51,15 @@ func (s *State) Hover(uri string, position lsp.Position, response *lsp.HoverResp
 	}
 	line := document.Lines[position.Line]
 	b := []byte(line.Content)
-	if len(b) < position.Character-1 {
+	if len(b) < position.Character {
 		return
 	}
-	if b[position.Character-1] == byte(' ') {
+	if b[position.Character] == byte(' ') {
 		return
 	}
 	var result *lexer.Token
 	for _, token := range line.Tokens {
-		if !(token.Column <= position.Character) {
+		if !(token.Character() <= position.Character) {
 			break
 		}
 		result = &token
@@ -68,7 +68,7 @@ func (s *State) Hover(uri string, position lsp.Position, response *lsp.HoverResp
 		return
 	}
 	response.Result = lsp.HoverResult{
-		Contents: fmt.Sprintf("Type: %s    Value: %s    Character: %c", result.Type, result.Literal, b[position.Character-1]),
+		Contents: fmt.Sprintf("Type: %s    Value: %s    Character: %c, Position: %d, Result: %d", result.Type, result.Literal, b[position.Character], position.Character, result.Column),
 	}
 }
 
