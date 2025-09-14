@@ -21,7 +21,7 @@ func EncodeMessage(msg any) string {
 	return fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(content), content)
 }
 
-// Returns the method name and content length
+// Returns the method name and content
 func DecodeMessage(data []byte) (string, []byte, error) {
 	header, content, found := bytes.Cut(data, []byte("\r\n\r\n"))
 	if !found {
