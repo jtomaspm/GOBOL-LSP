@@ -20,18 +20,21 @@ type InitializeResponse struct {
 }
 
 type InitializeResult struct {
-	Capabilities ServerCapabilities `json:"capabilities"`
 	ServerInfo   ServerInfo         `json:"serverInfo"`
-}
-
-type ServerCapabilities struct {
-	TextDocumentSync int  `json:"textDocumentSync"`
-	HoverProvider    bool `json:"hoverProvider"`
+	Capabilities ServerCapabilities `json:"capabilities"`
 }
 
 type ServerInfo struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+}
+
+type ServerCapabilities struct {
+	TextDocumentSync   int            `json:"textDocumentSync"`
+	HoverProvider      bool           `json:"hoverProvider"`
+	DefinitionProvider bool           `json:"definitionProvider"`
+	CodeActionProvider bool           `json:"codeActionProvider"`
+	CompletionProvider map[string]any `json:"completionProvider"`
 }
 
 func NewInitializeResponse(id int) InitializeResponse {
@@ -46,8 +49,11 @@ func NewInitializeResponse(id int) InitializeResponse {
 				Version: "0.0.0",
 			},
 			Capabilities: ServerCapabilities{
-				TextDocumentSync: 1,
-				HoverProvider:    true,
+				TextDocumentSync:   1,
+				HoverProvider:      true,
+				DefinitionProvider: true,
+				CodeActionProvider: false,            //not supported yet
+				CompletionProvider: map[string]any{}, //not supported yet
 			},
 		},
 	}
